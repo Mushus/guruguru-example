@@ -20,14 +20,44 @@ job:
     steps:
       # リポジトリから取得して配置する
       - checkout
-      # タスクにそれっぽい名前をつけて分割した
+      # 高速化のためにキャッシュしてもらう
+      - restore_cache:
+        keys:
+          # package.json の値のファイルの内容でキーを作ることで、
+          # package.json が更新されたときにキャッシュにヒットしなくなる
+          - v1-dependencies-{{ checksum "package.json" }}
+          # キャッシュずっと使いたい場合は以下のようにしておくと良いと思う。
+          # - v1-dependencies
+
+      # 依存解決する(使ってるライブラリを集める)
+      # `run` は好きなコマンドが実行できる
+      - run:
+        name: 依存解決
+        command: |
+          yarn
+
+      # キャッシュを保存する
+      - save_cache:
+        # キャッシュするパス
+        paths:
+          # node_module に色々ツールが入るのでそこをキャッシュする
+          - node_modules
+        # キー名は restore_cache と揃っていればなんでもいい。
+        key: v1-dependencies-{{ checksum "composer.json" }}
+
+      - run:
+        name: テスト
+        command: |
+          echo "test"
+          # yarn test
+
       - run:
         name: ビルド
         command: |
           echo "build"
           # yarn で依存解決してビルドする場合こんな感じ？
-          # yarn
           # yarn build
+
       - run:
         name: デプロイ
         command: |
