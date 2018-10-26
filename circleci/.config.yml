@@ -1,0 +1,33 @@
+# 最新のバージョン
+version: 2
+job:
+  build:
+    # タスクを実行する環境。
+    # Nodeがビルドしたいかもしれないので node のコンテナを選んでいる。
+    # コンテナ = 仮想環境みたいなもの。
+    # ↓にどんなDockerコンテナがあるか書いてある
+    # https://circleci.com/docs/2.0/circleci-images/
+    # node最新 / OS Debian Stretch / ブラウザなし
+    docker:
+      - image: circleci/node:stretch
+    # 環境変数
+    environment:
+      # 特に意味はなさそうだが、サンプルとしてタイムゾーンを設定している
+      TZ: /usr/share/zoneinfo/Asia/Tokyo
+    # タスクが実行される場所。リポジトリの内容がここに配置されてタスクが実行される。
+    working_directory: /home/circleci/ws
+    steps:
+      # リポジトリから取得して配置する
+      - checkout
+      # タスクにそれっぽい名前をつけて分割した
+      - run:
+        name: ビルド
+        command: |
+          echo "build"
+          # yarn で依存解決してビルドする場合こんな感じ？
+          # yarn
+          # yarn build
+      - run:
+        name: デプロイ
+        command: |
+          echo "deploy"
