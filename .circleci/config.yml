@@ -25,16 +25,16 @@ jobs:
     # 3. 依存解決(必要なライブラリを集める)
     # 4. キャッシュする
     # 5. テストする
-    # 6. デプロイする
+    # 6. ビルドする
+    # 7. デプロイする(Webサイトを更新する)
     steps:
       # リポジトリから取得して配置する
       - checkout
       # 高速化のためにキャッシュしてもらう
       - restore_cache:
-        keys:
+        keys: v1-dependencies-{{ checksum "package.json" }}
           # package.json の値のファイルの内容でキーを作ることで、
           # package.json が更新されたときにキャッシュにヒットしなくなる
-          - v1-dependencies-{{ checksum "package.json" }}
           # キャッシュずっと使いたい場合は以下のようにしておくと良いと思う。
           # - v1-dependencies
 
