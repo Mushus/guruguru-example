@@ -35,18 +35,20 @@ jobs:
       - checkout
       # 高速化のためにキャッシュしてもらう
       - restore_cache:
-          keys: v1-dependencies-{{ checksum "package.json" }}
-          # package.json の値のファイルの内容でキーを作ることで、
+          keys: v1-dependencies
+          # 今回はやってないが、package.json の値のファイルの内容でキーを作ることで、
           # package.json が更新されたときにキャッシュにヒットしなくなる
           # キャッシュずっと使いたい場合は以下のようにしておくと良いと思う。
-          # - v1-dependencies
+          # - keys: v1-dependencies-{{ checksum "package.json" }}
 
       # 依存解決する(使ってるライブラリを集める)
       # `run` は好きなコマンドが実行できる
       - run:
           name: 依存解決
           command: |
-            yarn
+            # ftp コマンドでアップロードは辛いので、ミラーリングアップロードできる lftp を導入する
+            sudo apt-get install lftp
+            # yarn
 
       # キャッシュを保存する
       - save_cache:
@@ -55,7 +57,7 @@ jobs:
             # node_module に色々ツールが入るのでそこをキャッシュする
             - node_modules
           # キー名は restore_cache と揃っていればなんでもいい。
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies
 
       - run:
           name: テスト
