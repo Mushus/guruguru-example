@@ -75,4 +75,4 @@ jobs:
       - run:
           name: デプロイ
           command: |
-            lftp -u $FTP_USER,$FTP_PASSWORD $FTP_HOST -e "mirror --reverse --delete --only-newer --verbose -X .DS_Store ./dist /; exit"
+            lftp -u ${FTP_USER},${FTP_PASSWORD} ${FTP_HOST} -e "mirror --reverse --delete --only-newer --verbose -X .DS_Store ./dist /; exit"
